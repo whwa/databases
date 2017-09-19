@@ -29,10 +29,11 @@ describe('Persistent Node Chat Server', function() {
 
   it('Should insert posted messages to the DB', function(done) {
     // Post the user to the chat server.
+    // $.ajax({})
     request({
       method: 'POST',
       uri: 'http://127.0.0.1:3000/classes/users',
-      json: { username: 'Valjean' }
+      json: { username: 'Javert' }
     }, function () {
       // Post a message to the node chat server:
       request({
@@ -40,7 +41,7 @@ describe('Persistent Node Chat Server', function() {
         uri: 'http://127.0.0.1:3000/classes/messages',
         json: {
           username: 'Valjean',
-          message: 'In mercy\'s name, three days is all I need.',
+          message: 'In mercys name, three days is all I need.',
           roomname: 'Hello'
         }
       }, function () {
@@ -52,12 +53,12 @@ describe('Persistent Node Chat Server', function() {
         var queryString = 'SELECT * FROM messages';
         var queryArgs = [];
 
-        dbConnection.query(queryString, queryArgs, function(err, results) {
+        dbConnection.query(queryString,/* queryArgs, */function(err, results) {
           // Should have one result:
           expect(results.length).to.equal(1);
 
           // TODO: If you don't have a column named text, change this test.
-          expect(results[0].message).to.equal('In mercy\'s name, three days is all I need.');
+          expect(results[0].message).to.equal('In mercys name, three days is all I need.');
 
           done();
         });
@@ -66,9 +67,18 @@ describe('Persistent Node Chat Server', function() {
   });
 
   it('Should output all messages from the DB', function(done) {
-    // Let's insert a message into the db
-       var queryString = "testy mac testerson";
-       var queryArgs = [];
+    // Let's insert a message into the 
+    request({
+      method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Valjean',
+        message: 'Men like you can never change!',
+        roomname: 'lobby'
+      }
+    });
+    var queryString = 'select * from messages;';
+    var queryArgs = [];
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */
@@ -81,7 +91,7 @@ describe('Persistent Node Chat Server', function() {
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
         var messageLog = JSON.parse(body);
         expect(messageLog[0].message).to.equal('Men like you can never change!');
-        expect(messageLog[0].roomname).to.equal('main');
+        expect(messageLog[0].room_name).to.equal('lobby');
         done();
       });
     });

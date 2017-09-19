@@ -8,6 +8,7 @@ router.post('/messages', controller.messages.post);
 
 router.get('/users', controller.users.get);
 
+// router.post('/users', controller.messages.post);
 router.post('/users', controller.users.post);
 
 
